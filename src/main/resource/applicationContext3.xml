@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--配置目标对象，即要被增强的对象-->
+    <bean id="productDao" class="com.spring_aop_xml.ProductDaoImpl" />
+    <!--将切面类交给Spring管理-->
+    <bean id="myAspectXml" class="com.spring_aop_xml.MyAspectXml" />
+
+    <!--配置AOP-->
+    <aop:config proxy-target-class="true">
+        <!--配置哪些类的那些方法需要被增强-->
+        <aop:pointcut id="pointcut1_save" expression="execution(* com.spring_aop_xml.ProductDaoImpl.save(..))"/>
+        <aop:pointcut id="pointcut2_search" expression="execution(* com.spring_aop_xml.ProductDaoImpl.search(..))"/>
+        <aop:pointcut id="pointcut3_update" expression="execution(* com.spring_aop_xml.ProductDaoImpl.update(..))"/>
+
+        <!--配置切面类来实现对上面的pointcut的advice-->
+        <aop:aspect ref="myAspectXml"> <!--ref为切面类的id-->
+            <!--在save方法调用前后分别进行校验和日志记录-->
+            <aop:before method="checkPri" pointcut-ref="pointcut1_save"/>
+            <aop:after method="logDocumented" pointcut-ref="pointcut1_save"/>
+            <!--在delete方法调用后进行日志记录-->
+            <aop:after-returning method="searchSuccess" pointcut-ref="pointcut2_search" returning="result"/>
+            <!--在update方法中若出现异常则进行异常抛出通知-->
+            <aop:after-throwing method="exceptionThrow" pointcut-ref="pointcut3_update" throwing="ex"/>
+        </aop:aspect>
+    </aop:config>
+</beans>

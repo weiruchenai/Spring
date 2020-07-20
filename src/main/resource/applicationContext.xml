@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <bean id="userService" class="com.spring_test.UserServiceImpl" >
+        <constructor-arg name="name" value="guanyu"/>
+    </bean>
+
+    <bean id="nameDao2" class="com.spring_test.NameDao2" p:nameDaoImpl-ref="nameDao" lazy-init="true">
+        <!--若属性的类型为对象，那么不能用value，而是用ref-->
+        <property name="nameDaoImpl" ref="nameDao"/>
+    </bean>
+
+    <bean id="nameDao" class="com.spring_test.NameDaoImpl" init-method="setup" lazy-init="true" destroy-method="destroy"  >
+        <!--value只能设置普通数据类型-->
+        <property name="name" value="zhangfei" />
+    </bean>
+
+    <bean id="productDao" class="com.spring_aop_xml.ProductDaoImpl" >
+
+    </bean>
+</beans>
